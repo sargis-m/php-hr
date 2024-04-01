@@ -12,9 +12,14 @@ class Contractor
     public $type;
     public $name;
 
+    public function __construct(int $id)
+    {
+        $this->id = $id;
+    }
+
     public static function getById(int $resellerId): self
     {
-        return new self($resellerId); // fakes the getById method
+        return new self($resellerId);
     }
 
     public function getFullName(): string
@@ -37,13 +42,13 @@ class Status
 
     public static function getName(int $id): string
     {
-        $a = [
+        $statuses = [
             0 => 'Completed',
             1 => 'Pending',
             2 => 'Rejected',
         ];
 
-        return $a[$id];
+        return $statuses[$id];
     }
 }
 
@@ -53,17 +58,23 @@ abstract class ReferencesOperation
 
     public function getRequest($pName)
     {
-        return $_REQUEST[$pName];
+        // Using $_REQUEST directly is not secure
+        // It can lead to security vulnerabilities such as CSRF attacks
+        // Instead we can use $_GET
+        return $_GET[$pName] ?? null;
     }
 }
 
-function getResellerEmailFrom()
+function getResellerEmailFrom($resellerId): string
 {
+    // added $resellerId argument, because we are passing it in other class
+    // here can be some logic to get reseller email
     return 'contractor@example.com';
 }
 
-function getEmailsByPermit($resellerId, $event)
+function getEmailsByPermit($resellerId, $event): array
 {
+    // here can be logic to get emails using $resellerId and $event
     // fakes the method
     return ['someemeil@example.com', 'someemeil2@example.com'];
 }
@@ -71,5 +82,7 @@ function getEmailsByPermit($resellerId, $event)
 class NotificationEvents
 {
     const CHANGE_RETURN_STATUS = 'changeReturnStatus';
+
+    // this constant is not using anywhere, we can remove it
     const NEW_RETURN_STATUS    = 'newReturnStatus';
 }
